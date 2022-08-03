@@ -2,12 +2,14 @@ import { txClient, queryClient, MissingWalletError , registry} from './module'
 
 import { CoinRatesCallData } from "./module/types/consuming/coin_rates"
 import { CoinRatesResult } from "./module/types/consuming/coin_rates"
+import { GoldPriceCallData } from "./module/types/consuming/gold_price"
+import { GoldPriceResult } from "./module/types/consuming/gold_price"
 import { ConsumingPacketData } from "./module/types/consuming/packet"
 import { NoData } from "./module/types/consuming/packet"
 import { Params } from "./module/types/consuming/params"
 
 
-export { CoinRatesCallData, CoinRatesResult, ConsumingPacketData, NoData, Params };
+export { CoinRatesCallData, CoinRatesResult, GoldPriceCallData, GoldPriceResult, ConsumingPacketData, NoData, Params };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -48,10 +50,14 @@ const getDefaultState = () => {
 				Params: {},
 				CoinRatesResult: {},
 				LastCoinRatesId: {},
+				GoldPriceResult: {},
+				LastGoldPriceId: {},
 				
 				_Structure: {
 						CoinRatesCallData: getStructure(CoinRatesCallData.fromPartial({})),
 						CoinRatesResult: getStructure(CoinRatesResult.fromPartial({})),
+						GoldPriceCallData: getStructure(GoldPriceCallData.fromPartial({})),
+						GoldPriceResult: getStructure(GoldPriceResult.fromPartial({})),
 						ConsumingPacketData: getStructure(ConsumingPacketData.fromPartial({})),
 						NoData: getStructure(NoData.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
@@ -100,6 +106,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.LastCoinRatesId[JSON.stringify(params)] ?? {}
+		},
+				getGoldPriceResult: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.GoldPriceResult[JSON.stringify(params)] ?? {}
+		},
+				getLastGoldPriceId: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.LastGoldPriceId[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -201,6 +219,50 @@ export default {
 		},
 		
 		
+		
+		
+		 		
+		
+		
+		async QueryGoldPriceResult({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryGoldPriceResult( key.request_id)).data
+				
+					
+				commit('QUERY', { query: 'GoldPriceResult', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryGoldPriceResult', payload: { options: { all }, params: {...key},query }})
+				return getters['getGoldPriceResult']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryGoldPriceResult API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryLastGoldPriceId({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryLastGoldPriceId()).data
+				
+					
+				commit('QUERY', { query: 'LastGoldPriceId', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryLastGoldPriceId', payload: { options: { all }, params: {...key},query }})
+				return getters['getLastGoldPriceId']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryLastGoldPriceId API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
 		async sendMsgCoinRatesData({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -216,6 +278,21 @@ export default {
 				}
 			}
 		},
+		async sendMsgGoldPriceData({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgGoldPriceData(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgGoldPriceData:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgGoldPriceData:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		
 		async MsgCoinRatesData({ rootGetters }, { value }) {
 			try {
@@ -227,6 +304,19 @@ export default {
 					throw new Error('TxClient:MsgCoinRatesData:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgCoinRatesData:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgGoldPriceData({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgGoldPriceData(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgGoldPriceData:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgGoldPriceData:Create Could not create message: ' + e.message)
 				}
 			}
 		},

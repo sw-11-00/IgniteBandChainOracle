@@ -33,6 +33,17 @@ func (am AppModule) handleOraclePacket(
 		am.keeper.SetCoinRatesResult(ctx, types.OracleRequestID(modulePacketData.RequestID), coinRatesResult)
 
 		// TODO: CoinRates oracle data reception logic
+
+	case types.GoldPriceClientIDKey:
+		var goldPriceResult types.GoldPriceResult
+		if err := obi.Decode(modulePacketData.Result, &goldPriceResult); err != nil {
+			ack = channeltypes.NewErrorAcknowledgement(err.Error())
+			return ack, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest,
+				"cannot decode the goldPrice received packet")
+		}
+		am.keeper.SetGoldPriceResult(ctx, types.OracleRequestID(modulePacketData.RequestID), goldPriceResult)
+
+		// TODO: GoldPrice oracle data reception logic
 		// this line is used by starport scaffolding # oracle/module/recv
 
 	default:
@@ -80,6 +91,15 @@ func (am AppModule) handleOracleAcknowledgment(
 					"cannot decode the coinRates oracle acknowledgment packet")
 			}
 			am.keeper.SetLastCoinRatesID(ctx, requestID)
+			return &sdk.Result{}, nil
+
+		case types.GoldPriceClientIDKey:
+			var goldPriceData types.GoldPriceCallData
+			if err = obi.Decode(data.GetCalldata(), &goldPriceData); err != nil {
+				return nil, sdkerrors.Wrap(err,
+					"cannot decode the goldPrice oracle acknowledgment packet")
+			}
+			am.keeper.SetLastGoldPriceID(ctx, requestID)
 			return &sdk.Result{}, nil
 			// this line is used by starport scaffolding # oracle/module/ack
 

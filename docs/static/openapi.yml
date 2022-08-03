@@ -30220,10 +30220,85 @@ paths:
           format: int64
       tags:
         - Query
+  '/oracle/consuming/gold_price_result/{request_id}':
+    get:
+      summary: GoldPriceResult defines a rpc handler method for MsgGoldPriceData.
+      operationId: Sw1100OracleConsumingGoldPriceResult
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              result:
+                type: object
+                properties:
+                  price:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: request_id
+          in: path
+          required: true
+          type: string
+          format: int64
+      tags:
+        - Query
   /oracle/consuming/last_coin_rates_id:
     get:
       summary: LastCoinRatesId query the last CoinRates result id
       operationId: Sw1100OracleConsumingLastCoinRatesId
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              request_id:
+                type: string
+                format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /oracle/consuming/last_gold_price_id:
+    get:
+      summary: LastGoldPriceId query the last GoldPrice result id
+      operationId: Sw1100OracleConsumingLastGoldPriceId
       responses:
         '200':
           description: A successful response.
@@ -51689,7 +51764,21 @@ definitions:
         items:
           type: string
           format: uint64
+  sw1100.oracle.consuming.GoldPriceCallData:
+    type: object
+    properties:
+      multiplier:
+        type: string
+        format: uint64
+  sw1100.oracle.consuming.GoldPriceResult:
+    type: object
+    properties:
+      price:
+        type: string
+        format: uint64
   sw1100.oracle.consuming.MsgCoinRatesDataResponse:
+    type: object
+  sw1100.oracle.consuming.MsgGoldPriceDataResponse:
     type: object
   sw1100.oracle.consuming.Params:
     type: object
@@ -51705,7 +51794,22 @@ definitions:
             items:
               type: string
               format: uint64
+  sw1100.oracle.consuming.QueryGoldPriceResponse:
+    type: object
+    properties:
+      result:
+        type: object
+        properties:
+          price:
+            type: string
+            format: uint64
   sw1100.oracle.consuming.QueryLastCoinRatesIdResponse:
+    type: object
+    properties:
+      request_id:
+        type: string
+        format: int64
+  sw1100.oracle.consuming.QueryLastGoldPriceIdResponse:
     type: object
     properties:
       request_id:

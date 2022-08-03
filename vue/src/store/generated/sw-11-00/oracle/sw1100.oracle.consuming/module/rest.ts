@@ -20,7 +20,19 @@ export interface ConsumingCoinRatesResult {
   rates?: string[];
 }
 
+export interface ConsumingGoldPriceCallData {
+  /** @format uint64 */
+  multiplier?: string;
+}
+
+export interface ConsumingGoldPriceResult {
+  /** @format uint64 */
+  price?: string;
+}
+
 export type ConsumingMsgCoinRatesDataResponse = object;
+
+export type ConsumingMsgGoldPriceDataResponse = object;
 
 /**
  * Params defines the parameters for the module.
@@ -31,7 +43,16 @@ export interface ConsumingQueryCoinRatesResponse {
   result?: ConsumingCoinRatesResult;
 }
 
+export interface ConsumingQueryGoldPriceResponse {
+  result?: ConsumingGoldPriceResult;
+}
+
 export interface ConsumingQueryLastCoinRatesIdResponse {
+  /** @format int64 */
+  request_id?: string;
+}
+
+export interface ConsumingQueryLastGoldPriceIdResponse {
   /** @format int64 */
   request_id?: string;
 }
@@ -282,6 +303,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryGoldPriceResult
+   * @summary GoldPriceResult defines a rpc handler method for MsgGoldPriceData.
+   * @request GET:/oracle/consuming/gold_price_result/{request_id}
+   */
+  queryGoldPriceResult = (request_id: string, params: RequestParams = {}) =>
+    this.request<ConsumingQueryGoldPriceResponse, RpcStatus>({
+      path: `/oracle/consuming/gold_price_result/${request_id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryLastCoinRatesId
    * @summary LastCoinRatesId query the last CoinRates result id
    * @request GET:/oracle/consuming/last_coin_rates_id
@@ -289,6 +326,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryLastCoinRatesId = (params: RequestParams = {}) =>
     this.request<ConsumingQueryLastCoinRatesIdResponse, RpcStatus>({
       path: `/oracle/consuming/last_coin_rates_id`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryLastGoldPriceId
+   * @summary LastGoldPriceId query the last GoldPrice result id
+   * @request GET:/oracle/consuming/last_gold_price_id
+   */
+  queryLastGoldPriceId = (params: RequestParams = {}) =>
+    this.request<ConsumingQueryLastGoldPriceIdResponse, RpcStatus>({
+      path: `/oracle/consuming/last_gold_price_id`,
       method: "GET",
       format: "json",
       ...params,

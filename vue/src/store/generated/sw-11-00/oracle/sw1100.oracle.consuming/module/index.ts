@@ -5,10 +5,12 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgCoinRatesData } from "./types/consuming/tx";
+import { MsgGoldPriceData } from "./types/consuming/tx";
 
 
 const types = [
   ["/sw1100.oracle.consuming.MsgCoinRatesData", MsgCoinRatesData],
+  ["/sw1100.oracle.consuming.MsgGoldPriceData", MsgGoldPriceData],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -42,6 +44,7 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgCoinRatesData: (data: MsgCoinRatesData): EncodeObject => ({ typeUrl: "/sw1100.oracle.consuming.MsgCoinRatesData", value: MsgCoinRatesData.fromPartial( data ) }),
+    msgGoldPriceData: (data: MsgGoldPriceData): EncodeObject => ({ typeUrl: "/sw1100.oracle.consuming.MsgGoldPriceData", value: MsgGoldPriceData.fromPartial( data ) }),
     
   };
 };

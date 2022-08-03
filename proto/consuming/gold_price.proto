@@ -1,0 +1,12 @@
+syntax = "proto3";
+package sw1100.oracle.consuming;
+
+option go_package = "github.com/sw-11-00/oracle/x/consuming/types";
+
+message GoldPriceCallData {
+  uint64 multiplier = 2;
+}
+
+message GoldPriceResult {
+  uint64 price = 1;
+}

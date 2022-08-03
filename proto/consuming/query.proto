@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "consuming/params.proto";
 import "consuming/coin_rates.proto";
+import "consuming/gold_price.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/sw-11-00/oracle/x/consuming/types";
@@ -25,6 +26,16 @@ service Query {
   	// LastCoinRatesId query the last CoinRates result id
   	rpc LastCoinRatesId(QueryLastCoinRatesIdRequest) returns (QueryLastCoinRatesIdResponse) {
 		option (google.api.http).get = "/oracle/consuming/last_coin_rates_id";
+  	}
+
+  	// GoldPriceResult defines a rpc handler method for MsgGoldPriceData.
+  	rpc GoldPriceResult(QueryGoldPriceRequest) returns (QueryGoldPriceResponse) {
+		option (google.api.http).get = "/oracle/consuming/gold_price_result/{request_id}";
+  	}
+
+  	// LastGoldPriceId query the last GoldPrice result id
+  	rpc LastGoldPriceId(QueryLastGoldPriceIdRequest) returns (QueryLastGoldPriceIdResponse) {
+		option (google.api.http).get = "/oracle/consuming/last_gold_price_id";
   	}
 // this line is used by starport scaffolding # 2
 }
@@ -47,5 +58,15 @@ message QueryCoinRatesResponse {
 message QueryLastCoinRatesIdRequest {}
 
 message QueryLastCoinRatesIdResponse {int64 request_id = 1;}
+
+message QueryGoldPriceRequest {int64 request_id = 1;}
+
+message QueryGoldPriceResponse {
+  GoldPriceResult result = 1;
+}
+
+message QueryLastGoldPriceIdRequest {}
+
+message QueryLastGoldPriceIdResponse {int64 request_id = 1;}
 
 // this line is used by starport scaffolding # 3

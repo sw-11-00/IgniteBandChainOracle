@@ -9,12 +9,16 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCoinRatesData{}, "consuming/CoinRatesData", nil)
+	cdc.RegisterConcrete(&MsgGoldPriceData{}, "consuming/GoldPriceData", nil)
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCoinRatesData{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgGoldPriceData{},
 	)
 	// this line is used by starport scaffolding # 3
 
