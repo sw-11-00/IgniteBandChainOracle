@@ -1,0 +1,12 @@
+syntax = "proto3";
+package sw1100.oracle.consuming;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/sw-11-00/oracle/x/consuming/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

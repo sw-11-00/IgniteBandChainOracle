@@ -1,0 +1,13 @@
+syntax = "proto3";
+package sw1100.oracle.consuming;
+
+option go_package = "github.com/sw-11-00/oracle/x/consuming/types";
+
+message CoinRatesCallData {
+  repeated string symbols = 1;
+  uint64 multiplier = 2;
+}
+
+message CoinRatesResult {
+  repeated uint64 rates = 1;
+}
